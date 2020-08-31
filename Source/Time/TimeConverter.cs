@@ -1,4 +1,4 @@
-namespace Time
+namespace RhythmGameTools.Time
 {
     public class TimeConverter
     {
@@ -7,7 +7,7 @@ namespace Time
 
         private BarBeatTick[] _calculatedTimeSignatureAndTempoChangeOffsets;
 
-        public TimeConverter(TimeInfo[] timeSignatureAndTempoChanges, ushort ticksPerBeat = 1024)
+        public TimeConverter(TimeInfo[] timeSignatureAndTempoChanges, ushort ticksPerBeat = 24000)
         {
             _timeSignatureAndTempoChanges                 = timeSignatureAndTempoChanges;
             _ticksPerBeat                                 = ticksPerBeat;
@@ -57,7 +57,7 @@ namespace Time
         /// <param name="timeSignatureAndTempoChanges">Time/Tempo/TimeSignature definitions for the song</param>
         /// <param name="ticksPerBeat">Resolution of ticks (keep consistent throughout app to avoid errors)</param>
         /// <returns>An array of timestamps corresponding to the supplied data</returns>
-        public static BarBeatTick[] CalculateTimeChangeOffsets(TimeInfo[] timeSignatureAndTempoChanges, ushort ticksPerBeat = 1024)
+        public static BarBeatTick[] CalculateTimeChangeOffsets(TimeInfo[] timeSignatureAndTempoChanges, ushort ticksPerBeat = 24000)
         {
             //Prepare response
             var offsets = new BarBeatTick[timeSignatureAndTempoChanges.Length];
@@ -93,9 +93,9 @@ namespace Time
         /// <param name="time">Time offset to calculate</param>
         /// <param name="bpm">Tempo of song in BPM (beats-per-minute)</param>
         /// <param name="beatsPerBar">Number of beats in a bar</param>
-        /// <param name="ticksPerBeat">Number of ticks per beat (default 1024)</param>
+        /// <param name="ticksPerBeat">Number of ticks per beat (default 24000)</param>
         /// <returns>Bar-Beat-Tick representation of the time</returns>
-        public static BarBeatTick CalculateBarBeatTickWithConstantTempo(double time, double bpm, uint beatsPerBar = 4, ushort ticksPerBeat = 1024)
+        public static BarBeatTick CalculateBarBeatTickWithConstantTempo(double time, double bpm, uint beatsPerBar = 4, ushort ticksPerBeat = 24000)
         {
             var beatLengthInSeconds = 60 / bpm;
             var exactBeatAtTime     = time / beatLengthInSeconds;
@@ -112,10 +112,10 @@ namespace Time
         /// <param name="time">Time offset to calculate</param>
         /// <param name="timeSignatureOrTempoChange">Tempo/Time signature at time</param>
         /// <param name="calculatedTimeSignatureOrTempoChangeOffset">Beat-Bar-Tick offset for timeSignatureOrTempoChange</param>
-        /// <param name="ticksPerBeat">Number of ticks per beat (default 1024)</param>
+        /// <param name="ticksPerBeat">Number of ticks per beat (default 24000)</param>
         /// <returns>Bar-Beat-Tick representation of the time</returns>
         public static BarBeatTick CalculateBarBeatTickWithVariableTimeSignatureOrTempo(double time, TimeInfo timeSignatureOrTempoChange, BarBeatTick calculatedTimeSignatureOrTempoChangeOffset,
-                                                                                       ushort ticksPerBeat = 1024)
+                                                                                       ushort ticksPerBeat = 24000)
         {
             var adjustedTime = time - timeSignatureOrTempoChange.Time;
             var offset       = CalculateBarBeatTickWithConstantTempo(adjustedTime, timeSignatureOrTempoChange.Tempo, timeSignatureOrTempoChange.BeatsPerBar, ticksPerBeat);
@@ -128,10 +128,10 @@ namespace Time
         /// <param name="barBeatTick">Timestamp to convert</param>
         /// <param name="timeSignatureOrTempoChange">Tempo/Time signature at time</param>
         /// <param name="calculatedTimeSignatureOrTempoChangeOffset">Beat-Bar-Tick offset for timeSignatureOrTempoChange</param>
-        /// <param name="ticksPerBeat">Number of ticks per beat (default 1024)</param>
+        /// <param name="ticksPerBeat">Number of ticks per beat (default 24000)</param>
         /// <returns>Discrete time representation in seconds</returns>
         public static double CalculateDiscreteTime(BarBeatTick barBeatTick, TimeInfo timeSignatureOrTempoChange, BarBeatTick calculatedTimeSignatureOrTempoChangeOffset,
-                                                   ushort      ticksPerBeat = 1024)
+                                                   ushort      ticksPerBeat = 24000)
         {
             var rawTicks            = barBeatTick.AsTicks(timeSignatureOrTempoChange.BeatsPerBar, ticksPerBeat);
             var rawTicksOfOffset    = calculatedTimeSignatureOrTempoChangeOffset.AsTicks(timeSignatureOrTempoChange.BeatsPerBar, ticksPerBeat);

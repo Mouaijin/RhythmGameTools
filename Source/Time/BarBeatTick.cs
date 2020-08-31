@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 
-namespace Time
+namespace RhythmGameTools.Time
 {
     public readonly struct BarBeatTick
     {
@@ -42,7 +41,7 @@ namespace Time
             return Tick + ( Bar * beatsPerBar + Beat ) * ticksPerBeat;
         }
 
-        public BarBeatTick Add(BarBeatTick b, uint beatsPerBar = 4, ushort ticksPerBeat = 1024)
+        public BarBeatTick Add(BarBeatTick b, uint beatsPerBar = 4, ushort ticksPerBeat = 24000)
         {
             var tick         = Tick + b.Tick;
             var carryBeat    = tick / ticksPerBeat;
@@ -58,7 +57,7 @@ namespace Time
         /// Subtracts the lesser of the two timestamps from the larger
         /// </summary>
         /// <returns>Difference between two BarBeatTick objects</returns>
-        public BarBeatTick Difference(BarBeatTick b, uint beatsPerBar = 4, ushort ticksPerBeat = 1024)
+        public BarBeatTick Difference(BarBeatTick b, uint beatsPerBar = 4, ushort ticksPerBeat = 24000)
         {
             static (ulong min, ulong max) GetMinMax(ulong x, ulong y) => ( Math.Min(x, y), Math.Max(x, y) );
 
@@ -121,6 +120,16 @@ namespace Time
         public static bool operator >=(BarBeatTick a, BarBeatTick b)
         {
             return a > b || a == b;
+        }
+
+        public static implicit operator BarBeatTick((uint bar, uint beat, ushort tick) tuple)
+        {
+            return new BarBeatTick(tuple.bar, tuple.beat, tuple.tick);
+        }
+
+        public static implicit operator (uint bar, uint beat, ushort tick)(BarBeatTick bbt)
+        {
+            return ( bbt.Bar, bbt.Beat, bbt.Tick );
         }
 
         public override string ToString()
